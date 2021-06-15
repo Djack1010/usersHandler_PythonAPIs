@@ -8,7 +8,7 @@ import utils.settings as settings
 from api.restplus import api
 from api.serializers import email, user
 
-ns = api.namespace('login', description='Handle users information')
+ns = api.namespace('user', description='Handle users information')
 
 @ns.param('email', 'The User email')
 class GetUser(Resource):

@@ -3,7 +3,7 @@ import sys
 from flask import Flask, Blueprint
 
 import utils.settings as settings
-from api.endpoints.v1.login import ns as login_namespace
+from api.endpoints.v1.user import ns as user_namespace
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from api.restplus import api
@@ -22,7 +22,7 @@ def configure_app(flask_app):
 def get_api_v1_blueprint():
     blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
     api.init_app(blueprint)
-    api.add_namespace(login_namespace)
+    api.add_namespace(user_namespace)
     return blueprint
 
 
