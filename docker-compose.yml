@@ -1,0 +1,21 @@
+version: "2"
+services:
+  app:
+    build: ./app
+    restart: always
+    container_name: test_api
+    links:
+      - db
+    ports:
+      - "5000:5000"
+  db:
+    image: mysql:5.7
+    restart: always
+    container_name: test_mysql
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: CHOOSE_A_PASSWORD
+      MYSQL_DATABASE: login
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
