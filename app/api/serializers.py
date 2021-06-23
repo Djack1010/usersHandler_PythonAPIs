@@ -4,7 +4,7 @@ from api.restplus import api
 
 email = api.model('user email', {
     'email': fields.String(required=True, example='test@cnr.it',
-                          # pattern='',  TODO: implement
+                          pattern='\S+@\S+.\S+',
                           description='The user email'),
 })
 

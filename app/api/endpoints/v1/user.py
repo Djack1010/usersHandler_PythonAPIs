@@ -1,5 +1,6 @@
 from datetime import datetime
-
+import mysql.connector as mysql
+import pymysql
 from flask import request
 from flask_restplus import Resource
 from mysql.connector import connect, Error
@@ -7,6 +8,14 @@ from mysql.connector import connect, Error
 import utils.settings as settings
 from api.restplus import api
 from api.serializers import email, user
+
+conn = mysql.connect(
+    host = "localhost",
+    user = "root",
+    port = "32000",
+    passwd = "admin0x",
+    database = "login"
+)
 
 ns = api.namespace('user', description='Handle users information')
 
@@ -21,11 +30,18 @@ class GetUser(Resource):
 
         #TODO: implement
 
-        answ = [{
-            'email': 'test@cnr.it',
-            'name': 'nedo',
-            'job': 'student'
-        }]
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        query = 'SELECT * FROM users'
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            if row[1] == email:
+                answ = [{
+                    'email': row[1],
+                    'name': row[2],
+                    'job': row[3]
+                }]
+                cursor.close()
 
         return answ, 200
 
@@ -42,7 +58,11 @@ class PostUser(Resource):
         """
 
         # TODO: implement
-
+        cur = conn.cursor()
+        cur.execute("insert into users (email,name,job) values (%s, %s, %s)", (email, name, job))
+        print(email, name, job)
+        conn.commit()
+        cur.close()
         return "OK", 200
 
 

@@ -11,7 +11,7 @@ RESTPLUS_ERROR_404_HELP = False
 
 # DB settings
 DB_USER = 'root'
-DB_PASSWORD = 'CHOOSE_A_PASSWORD'
+DB_PASSWORD = 'admin0x'
 # DB_HOST = 'db'
 DB_HOST = 'localhost'
 # DB_PORT = '3306'
