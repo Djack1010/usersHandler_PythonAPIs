@@ -1,6 +1,5 @@
 from datetime import datetime
 import mysql.connector as mysql
-import pymysql
 from flask import request
 from flask_restplus import Resource
 from mysql.connector import connect, Error
@@ -20,7 +19,7 @@ conn = mysql.connect(
 ns = api.namespace('user', description='Handle users information')
 
 users = []
-cursor = conn.cursor(pymysql.cursors.DictCursor)
+cursor = conn.cursor()
 query = 'SELECT * FROM users'
 cursor.execute(query)
 rows = cursor.fetchall()
