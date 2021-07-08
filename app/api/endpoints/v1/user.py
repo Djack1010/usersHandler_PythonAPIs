@@ -1,7 +1,5 @@
-
 from datetime import datetime
-import mysql.connector as mysql
-import pymysql
+
 from flask import request
 from flask_restplus import Resource
 from mysql.connector import connect, Error
@@ -9,14 +7,7 @@ from mysql.connector import connect, Error
 import utils.settings as settings
 from api.restplus import api
 from api.serializers import email, user
-
-conn = mysql.connect(
-    host = "localhost",
-    user = "root",
-    port = "32000",
-    passwd = "admin0x",
-    database = "login"
-)
+from utils.settings import conn
 
 ns = api.namespace('user', description='Handle users information')
 
@@ -29,22 +20,26 @@ class GetUser(Resource):
         Return the User object with the input email
         """
 
-        #TODO: implement
+        cursor = conn.cursor()
+        query = ('SELECT * FROM users WHERE email = %s')
+        eml = (email,)
+        row_count = cursor.execute(query, eml)
 
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        query = 'SELECT * FROM users'
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        for row in rows:
-            if row[1] == email:
-                answ = [{
+        if row_count != 0:
+            rows = cursor.fetchall()
+            print("roooooows",rows)
+            for row in rows:
+                answer = [{
                     'email': row[1],
                     'name': row[2],
                     'job': row[3]
                 }]
-                cursor.close()
 
-        return answ, 200
+            return answer, 200
+        else:
+            return "No user with such email", 404
+            cursor.close()
+
 
 
 @ns.param('email', 'The user email')
@@ -57,14 +52,18 @@ class PostUser(Resource):
         """
         Send (eventually, update) an answer for a specific user.
         """
-
-        # TODO: implement
-        cur = conn.cursor()
-        cur.execute("insert into users (email,name,job) values (%s, %s, %s)", (email, name, job))
-        print(email, name, job)
-        conn.commit()
-        cur.close()
-        return "OK", 200
+        try:
+            cur = conn.cursor()
+            query2 = ("insert into users (email,name,job) values (%s, %s, %s)")
+            pld = (email, name, job,)
+            cur.execute(query2, pld)
+            print(email, name, job)
+            conn.commit()
+        except NameError:
+            return "Something went wrong"
+        finally:
+            cur.close()
+        return "User added", 200
 
 
 ns.add_resource(GetUser, '/<string:email>')
